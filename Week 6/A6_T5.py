@@ -1,39 +1,37 @@
 SEPARATOR = ";"
 
 
-def readValues(filename: str) -> str:
-    Values = ""
+def readValues(filename: str = None) -> str:
+    if filename is None:
+        filename = input("Insert filename: ")
     with open(filename, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-        for i, line in enumerate(lines):
-            num = line.strip()
-            Values += num
-            if i < len(lines) - 1:
-                Values += SEPARATOR
-    return Values
+        rows = [line.strip() for line in f.read().splitlines()]
+    return SEPARATOR.join(rows)
 
 
 def analyseNumbers(values: str) -> str:
-    parts = values.split(SEPARATOR)
-    numbers = [int(x) for x in parts if x.strip() != ""]
-    Count = len(numbers)
-    Sum_ = sum(numbers)
-    Greatest = max(numbers)
-    Average = Sum_ / Count
-    result = f"{Count};{Sum_};{Greatest};{Average:.2f}"
-    return result
+    nums = [int(x) for x in values.split(SEPARATOR) if x != ""]
+    count = len(nums)
+    total = sum(nums)
+    greatest = max(nums) if nums else 0
+    average = (total / count) if count else 0.0
+    return f"{count};{total};{greatest};{average:.2f}"
+
+
+def displayResults(filename: str, results: str) -> None:
+    print("#### Number analysis - START ####")
+    print(f'File "{filename}" results:')
+    print("Count;Sum;Greatest;Average")
+    print(results)
+    print("\n#### Number analysis - END ####")
 
 
 def main():
     print("Program starting.")
     filename = input("Insert filename: ")
-    print("#### Number analysis - START ####")
-    print(f'File "{filename}" results:')
-    Values = readValues(filename)
-    results = analyseNumbers(Values)
-    print("Count;Sum;Greatest;Average")
-    print(results)
-    print("\n#### Number analysis - END ####")
+    values = readValues(filename)
+    results = analyseNumbers(values)
+    displayResults(filename, results)
     print("Program ending.")
 
 
